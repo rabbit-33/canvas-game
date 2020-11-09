@@ -1,0 +1,52 @@
+<html>
+<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+<link rel = "stylesheet" href = "style.css" />
+
+<style>
+    body {
+      margin: 0;
+      background: linear-gradient(turquoise, purple);
+    }
+  </style>
+
+<head>
+    <script src = "https://unpkg.com/vue"></script>
+    <script src = "https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div id = "app">
+        <table class = "styled-table select-none" style = "margin: auto">
+            <thead>
+                <tr>
+                    <td>Rank</td>
+                    <td>Username</td>
+                    <td>High Score</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for = "(row,index) in leaderboard">
+                   <td>{{index+1}}</td>
+                    <td>{{row.username}}</td>
+                    <td>{{row.score}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                leaderboard: []
+            },
+            beforeCreate() {
+                axios.get("/leaderboard").then(response => {
+                    this.leaderboard = response.data
+                })
+            }
+        })
+    </script>
+
+</body>
+
+</html>
