@@ -40,7 +40,7 @@
                 leaderboard: []
             },
             beforeCreate() {
-                axios.get("/leaderboard").then(response => {
+                axios.get("https://easy-soapy-shirt.glitch.me/leaderboard").then(response => {
                     this.leaderboard = response.data
                 })
             }
