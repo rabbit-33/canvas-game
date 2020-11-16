@@ -74,7 +74,29 @@ class Enemy {
   }
 }
 
-const friction = 0.99;
+class Dot {
+  constructor(x, y, radius) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+  }
+
+  draw() {
+    c.beginPath();
+    c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    c.fillStyle = this.color;
+    c.fill();
+  }
+
+  update(color) {
+    this.color = color;
+    this.draw();
+  }
+
+}
+
+
+const friction = (0.9 + 0.09);
 class Particle {
   constructor(x, y, radius, color, velocity) {
     this.x = x;
@@ -108,7 +130,8 @@ class Particle {
 const x = canvas.width / 2;
 const y = canvas.height / 2;
 
-let player = new Player(x, y, 10, "white");
+var player = new Player(x, y, 10, "white");
+
 let projectiles = [];
 let enemies = [];
 let particles = [];
@@ -117,6 +140,15 @@ function init() {
   player = new Player(x, y, 10, "white");
   projectiles = [];
   enemies = [];
+  dots = [];
+  lastEnemyColor = "blue"
+  for (var i = 0; i < canvas.width; i += 50) {
+    for (var j = 0; j < canvas.height; j += 50) {
+      let dot = new Dot (i, j, 5)
+      dots.push(dot)
+      dot.update(lastEnemyColor)
+    }
+  }
   particles = [];
   score = 0;
   scoreEl.innerHTML = score;
@@ -168,10 +200,9 @@ function spawnEnemies() {
 }
 
 let animationId;
-
 function animate() {
   animationId = requestAnimationFrame(animate);
-  c.fillStyle = "rgba(0, 0, 0, 0.1)";
+  c.fillStyle = "rgba(0, 0, 0, 0.09)";
   c.fillRect(0, 0, canvas.width, canvas.height);
   player.draw();
   particles.forEach((particle, index) => {
@@ -181,6 +212,9 @@ function animate() {
       particle.update();
     }
   });
+  dots.forEach((dot, index) => {
+    dot.update(lastEnemyColor)
+  })
   projectiles.forEach((projectile, index) => {
     projectile.update();
 
@@ -206,7 +240,7 @@ function animate() {
       modalEl.style.display = "flex";
       leaderBoardBtn.style.display = "flex";
       bigScoreEl.innerHTML = score;
-      axios.post("https://easy-soapy-shirt.glitch.me/submitScore", {"username": username.value, "score":score}).then ( (response) => {
+      axios.post("/submitScore", {"username": username.value, "score":score}).then ( (response) => {
          console.log(response)
       }
     )
@@ -216,6 +250,7 @@ function animate() {
       const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
 
       if (dist - enemy.radius - projectile.radius < 1) {
+        lastEnemyColor = enemy.color
         for (let i = 0; i < enemy.radius * 2; i++) {
           particles.push(
             new Particle(
@@ -292,4 +327,3 @@ window.onload = function() {
     leaderBoardBtn.style.display = "flex"
   } 
 };
-
