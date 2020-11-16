@@ -240,7 +240,7 @@ function animate() {
       modalEl.style.display = "flex";
       leaderBoardBtn.style.display = "flex";
       bigScoreEl.innerHTML = score;
-      axios.post("/submitScore", {"username": username.value, "score":score}).then ( (response) => {
+      axios.post("https://easy-soapy-shirt.glitch.me/submitScore", {"username": username.value, "score":score}).then ( (response) => {
          console.log(response)
       }
     )
